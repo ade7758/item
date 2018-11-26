@@ -24,10 +24,10 @@
 			}
 		},
 		methods:{
-			getUser(){
-				this.$https.post('login',this.formdata)
-				.then((res)=>{
-					
+			async getUser(){
+//				ES7的新写法
+			const res =	await this.$https.post('login',this.formdata)
+				
 					const {meta,data} = res.data
 					if(meta.status==200){
 						this.$message({
@@ -36,7 +36,22 @@
 				        });
 						this.$router.push({name:'home'})
 					}
-				})
+				
+//				this.$https.post('login',this.formdata)
+//				.then((res)=>{
+//					
+//					const {meta,data} = res.data
+//					if(meta.status==200){
+//						this.$message({
+//				          message: meta.msg,
+//				          type: 'success'
+//				        });
+//						this.$router.push({name:'home'})
+//					}
+//				})
+				
+				
+				
 			}
 		}
 	}

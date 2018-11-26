@@ -4,9 +4,12 @@ import Vue from 'vue'
 import ElementUI from 'element-ui';
 import router from '@/router/index.js'
 import App from './App'
-
+import 'element-ui/lib/theme-chalk/index.css';
+import '@/assets/css/index.css'
+import MyHttpSever from '@/plugins/https.js'
 
 Vue.use(ElementUI)
+Vue.use(MyHttpSever)
 
 Vue.config.productionTip = false
 

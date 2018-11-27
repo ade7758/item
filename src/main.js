@@ -7,11 +7,16 @@ import App from './App'
 import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/css/index.css'
 import MyHttpSever from '@/plugins/https.js'
+import moment from 'moment'
 
 Vue.use(ElementUI)
 Vue.use(MyHttpSever)
 
 Vue.config.productionTip = false
+
+Vue.filter('fmtdate',(v)=>{
+	return moment(v).format('YYYY-MM-DD')
+})
 
 new Vue({
   el: '#app',

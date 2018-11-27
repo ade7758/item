@@ -30,6 +30,7 @@
 				
 					const {meta,data} = res.data
 					if(meta.status==200){
+						const token = localStorage.setItem('token',data.token)
 						this.$message({
 				          message: meta.msg,
 				          type: 'success'
@@ -73,5 +74,6 @@
 }
 .login_wrap .btn{
 	width: 100%;
+	text-align: center;
 }
 </style>

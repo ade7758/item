@@ -11,8 +11,8 @@
 
 		<!--search-->
 		<el-row>
-			<el-input v-model="query" placeholder="请输入用户信息" class="input-with-select">
-				<el-button slot="append" icon="el-icon-search"></el-button>
+			<el-input v-model="query" @clear="resetUsers()" clearable placeholder="请输入用户信息" class="input-with-select">
+				<el-button slot="append" @click='searchUsers()' icon="el-icon-search"></el-button>
 
 			</el-input>
 			<el-button type="success" plain>添加用户</el-button>
@@ -80,6 +80,17 @@
 			this.getUsers();
 		},
 		methods: {
+			//搜索用户
+			searchUsers(){
+				this.pagenum=1
+				this.getUsers();
+				
+			},
+			// 清除搜索信息后 重新获取原用户列表
+			resetUsers(){
+				this.pagenum=1
+				this.getUsers();
+			},
 			//分页方法
 			  //每页条数
 			 handleSizeChange(val) {

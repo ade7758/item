@@ -15,7 +15,7 @@
 				<el-button slot="append" @click='searchUsers()' icon="el-icon-search"></el-button>
 
 			</el-input>
-			<el-button type="success" plain>添加用户</el-button>
+			<el-button type="success" @click="showAddUsers()" plain>添加用户</el-button>
 		</el-row>
 
 		<!--用户表单-->
@@ -37,9 +37,11 @@
 			</el-table-column>
 			<el-table-column label="操作">
 				<template slot-scope='scope'>
-					<el-button size="mini" :plain="true" type="primary" icon="el-icon-edit" circle></el-button>
+					<el-button size="mini" 
+						@click="openEdit(scope.row)" :plain="true" type="primary" icon="el-icon-edit" circle></el-button>
 					<el-button size="mini" :plain="true" type="success" icon="el-icon-check" circle></el-button>
-					<el-button size="mini" :plain="true" type="danger" icon="el-icon-delete" circle></el-button>
+					<el-button size="mini" :plain="true" type="danger" 
+						@click="openDel(scope.row.id)" icon="el-icon-delete" circle></el-button>
 				</template>
 			</el-table-column>
 
@@ -54,6 +56,48 @@
 	      layout="total, sizes, prev, pager, next, jumper"
 	      :total="total">
 	    </el-pagination>
+		<!--添加用户弹出框-->
+		<el-dialog title="添加用户" :visible.sync="dialogFormVisibleAdd">
+		  <el-form :model="form">
+		    <el-form-item label="用户名" label-width="100px">
+		      <el-input v-model="form.username" autocomplete="off"></el-input>
+		    </el-form-item>
+		    <el-form-item label="密码" label-width="100px">
+		      <el-input v-model="form.password" autocomplete="off"></el-input>
+		    </el-form-item>
+		    <el-form-item label="邮箱" label-width="100px">
+		      <el-input v-model="form.email" autocomplete="off"></el-input>
+		    </el-form-item>
+		    <el-form-item label="手机" label-width="100px">
+		      <el-input v-model="form.mobile" autocomplete="off"></el-input>
+		    </el-form-item>
+		    
+		  </el-form>	
+		  <div slot="footer" class="dialog-footer">
+		    <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
+		    <el-button type="primary" @click="addUser()">确 定</el-button>
+		  </div>
+		</el-dialog>
+		<!--修改用户信息弹出框-->
+		<el-dialog title="修改信息" :visible.sync="dialogFormVisibleEdit">
+		  <el-form :model="form">
+		    <el-form-item label="用户名" label-width="100px">
+		      <el-input v-model="form.username" disabled autocomplete="off"></el-input>
+		    </el-form-item>
+		    <el-form-item label="邮箱" label-width="100px">
+		      <el-input v-model="form.email" autocomplete="off"></el-input>
+		    </el-form-item>
+		    <el-form-item label="手机" label-width="100px">
+		      <el-input v-model="form.mobile" autocomplete="off"></el-input>
+		    </el-form-item>
+		    
+		  </el-form>	
+		  <div slot="footer" class="dialog-footer">
+		    <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+		    <el-button type="primary" @click="editUser()">确 定</el-button>
+		  </div>
+		</el-dialog>
+	
 	</div>
 </template>
 
@@ -73,13 +117,65 @@
 					mobile: "",
 					role_name: "",
 					username: ""
-				}]
+				}],
+				dialogFormVisibleAdd:false,
+				dialogFormVisibleEdit:false,
+				
+				form:{
+					username:'',
+					mobile:'',
+					email:'',
+					password:''
+				}
 			}
 		},
 		created() {
 			this.getUsers();
 		},
 		methods: {
+			//打开编辑窗口
+			async openEdit(user){
+				this.dialogFormVisibleEdit = true
+				this.form =user
+			},
+			// 提交编辑用户
+			async editUser(id){
+				//关闭弹出框
+				this.dialogFormVisibleEdit = false
+				
+				//更新用户列表
+				const res = await this.$https.put(`users/${this.form.id}`,this.form)
+				//提示信息
+				const {meta:{msg,status}} = res.data
+				if(status==200){
+					this.$message.success(msg)
+				}
+			},
+			// 打开删除用户窗口
+			openDel(id) {
+		        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+		          confirmButtonText: '确定',
+		          cancelButtonText: '取消',
+		          type: 'warning'
+		        }).then(async () => {
+		          	this.$message({
+			            type: 'success',
+			            message: res.data.meta.msg
+			          });
+		          
+			        const res = await this.$https.delete(`users/${id}`)
+					//this.pagenum = 1
+
+					this.getUsers();
+				   
+		        }).catch(() => {
+		          this.$message({
+		            type: 'info',
+		            message: res.data.meta.msg
+		          });          
+		        });
+		      }
+			,
 			//搜索用户
 			searchUsers(){
 				this.pagenum=1
@@ -90,6 +186,31 @@
 			resetUsers(){
 				this.pagenum=1
 				this.getUsers();
+			},
+			// 显示添加用户
+			showAddUsers(){
+				this.dialogFormVisibleAdd = true;
+			},
+			// 添加用户
+			async addUser(){
+				//发送请求
+				const res = await this.$https.post('users',this.form)
+				//获取返回数据
+				const {meta:{msg,status},data} = res.data
+				console.log(res)
+				//判断
+				if(status==201){
+					// 提示信息
+					this.$message.success(msg)
+					// 关闭弹出框
+					this.dialogFormVisibleAdd = false;
+					// 更新列表
+					this.getUsers();
+					// 清空form内容
+					this.form = {}
+				}else{
+					this.$message.warning(msg)
+				}
 			},
 			//分页方法
 			  //每页条数

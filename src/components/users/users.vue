@@ -25,17 +25,35 @@
 			<el-table-column prop="email" label="邮箱"></el-table-column>
 			<el-table-column prop="mobile" label="电话"></el-table-column>
 			<el-table-column label="创建日期">
-				<template slot-scope='tableData'>
-					{{tableData.row.create_time | fmtdate}}
+				<template slot-scope='scope'>
+					{{ scope.row.create_time | fmtdate}}
 				</template>
 			</el-table-column>
-			<el-table-column prop="mg_state" label="用户状态"></el-table-column>
-			<el-table-column label="操作"></el-table-column>
+			<el-table-column label="用户状态">
+				<template slot-scope='scope'>
+					<el-switch v-model="scope.row.mg_status" active-color="#13ce66" inactive-color="#ff4949">
+					</el-switch>
+				</template>
+			</el-table-column>
+			<el-table-column label="操作">
+				<template slot-scope='scope'>
+					<el-button size="mini" :plain="true" type="primary" icon="el-icon-edit" circle></el-button>
+					<el-button size="mini" :plain="true" type="success" icon="el-icon-check" circle></el-button>
+					<el-button size="mini" :plain="true" type="danger" icon="el-icon-delete" circle></el-button>
+				</template>
+			</el-table-column>
 
-			
-			<el-switch v-model="tableData.mg_state" active-color="#13ce66" inactive-color="#ff4949">
-			</el-switch>
 		</el-table>
+		<!--分页-->
+		<el-pagination
+	      @size-change="handleSizeChange"
+	      @current-change="handleCurrentChange"
+	      :current-page='pagenum'
+	      :page-sizes="[2, 3, 4, 5]"
+	      :page-size="pagesize"
+	      layout="total, sizes, prev, pager, next, jumper"
+	      :total="total">
+	    </el-pagination>
 	</div>
 </template>
 
@@ -47,14 +65,6 @@
 				pagenum: 1,
 				pagesize: 2,
 				total: -1,
-				/*
-				create_time: 1486720211
-				email: "adsfad@qq.com"
-				id: 500
-				mg_state: true
-				mobile: "12345678"
-				role_name: "主管"
-				username: "admin"*/
 				tableData: [{
 					create_time: '',
 					email: "",
@@ -70,6 +80,20 @@
 			this.getUsers();
 		},
 		methods: {
+			//分页方法
+			  //每页条数
+			 handleSizeChange(val) {
+		        console.log(`每页 ${val} 条`);
+		        this.pagesize = val
+		        this.getUsers()
+		        
+		      },
+		      //当前页 
+		      handleCurrentChange(val) {
+		        console.log(`当前页: ${val}`);
+		        this.pagenum = val
+		        this.getUsers()
+		      },
 			async getUsers() {
 				const AUTH_TOKEN = localStorage.getItem('token')
 				this.$https.defaults.headers.common['Authorization'] = AUTH_TOKEN

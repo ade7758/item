@@ -96,6 +96,7 @@
 			<el-form-item label="活动区域" label-width="100px">
 			    <el-select v-model="roleId">
 				    <el-option label="区域一" value="-1"></el-option>
+				    
 				</el-select>
 			</el-form-item>
 		</el-form>

@@ -1,6 +1,6 @@
 <template>
 	<el-container class="container">
-		 <!--顶部-->
+		<!--顶部-->
 		<el-header class="header">
 			<el-row>
 				<el-col :span="4">
@@ -14,83 +14,64 @@
 				</el-col>
 			</el-row>
 		</el-header>
-		
-		
+		<!--侧边导航栏-->
 		<el-container>
-			 <!--侧边栏-->
+			<!--侧边栏-->
 			<el-aside class="aside" width="200px">
-				<el-menu 
-					:router='true'
-					:unique-opened="true"
-					default-active="2" class="el-menu-vertical-demo" >
-					<el-submenu index="1">
+				<el-menu :router='true' :unique-opened="true" default-active="2" class="el-menu-vertical-demo">
+					<el-submenu v-for="(item1,i) in menus" :key="i" :index="''+item1.order">
 						<template slot="title">
 							<i class="el-icon-location"></i>
-							<span>用户管理</span>
+							<span>{{item1.authName}}</span>
 						</template>
-						<el-menu-item index="users">用户列表</el-menu-item>
-					</el-submenu>
-					<el-submenu index="2">
-						<template slot="title">
-							<i class="el-icon-location"></i>
-							<span>角色管理</span>
-						</template>
-						<el-menu-item index="rights">权限列表</el-menu-item>
-						<el-menu-item index="role">角色列表</el-menu-item>
-					</el-submenu>
-					<el-submenu index="3">
-						<template slot="title">
-							<i class="el-icon-location"></i>
-							<span>导航一</span>
-						</template>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-					</el-submenu>
-					<el-submenu index="4">
-						<template slot="title">
-							<i class="el-icon-location"></i>
-							<span>导航一</span>
-						</template>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-					</el-submenu>
-					<el-submenu index="5">
-						<template slot="title">
-							<i class="el-icon-location"></i>
-							<span>导航一</span>
-						</template>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-						<el-menu-item index="1-1">选项1</el-menu-item>
+						<el-menu-item v-for="(item2,index) in item1.children" :key="index" :index="''+item2.path ">
+							<span>{{item2.authName}}</span>
+						</el-menu-item>
 					</el-submenu>
 				</el-menu>
 			</el-aside>
-			
-			 <!--内容-->
+
+			<!--内容-->
 			<el-main class="main">
 				<router-view/>
 			</el-main>
 		</el-container>
+	
 	</el-container>
 </template>
 
 <script>
 	export default {
-		beforeCreate(){
+		data() {
+			return {
+				menus: []
+			}
+		},
+		beforeCreate() {
 			const token = localStorage.getItem('token')
-			if(!token){
-				this.$router.push({name:'login'})
+			if(!token) {
+				this.$router.push({
+					name: 'login'
+				})
 			}
 		},
-		methods:{
-			logout(){
+		created() {
+			this.getMenus()
+		},
+		methods: {
+			async getMenus() {
+				const res = await this.$https.get(`menus`)
+				console.log(res)
+				this.menus = res.data.data
+			},
+			logout() {
 				localStorage.clear()
-				this.$router.push({name:'login'})
+				this.$router.push({
+					name: 'login'
+				})
 			}
 		},
-		
+
 	}
 </script>
 

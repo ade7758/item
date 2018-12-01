@@ -33,11 +33,10 @@
 					<el-submenu index="2">
 						<template slot="title">
 							<i class="el-icon-location"></i>
-							<span>导航一</span>
+							<span>角色管理</span>
 						</template>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-						<el-menu-item index="1-1">选项1</el-menu-item>
-						<el-menu-item index="1-1">选项1</el-menu-item>
+						<el-menu-item index="rights">权限列表</el-menu-item>
+						<el-menu-item index="role">角色列表</el-menu-item>
 					</el-submenu>
 					<el-submenu index="3">
 						<template slot="title">

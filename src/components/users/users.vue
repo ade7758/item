@@ -1,13 +1,12 @@
 <template>
 	<div id="">
 	<!--面包屑-->
-	<el-breadcrumb separator="/">
-		<!--<el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>-->
+<!--	<el-breadcrumb separator="/">
 		<el-breadcrumb-item>首页</el-breadcrumb-item>
 		<el-breadcrumb-item>用户管理</el-breadcrumb-item>
 		<el-breadcrumb-item>用户列表</el-breadcrumb-item>
-	</el-breadcrumb>
-
+	</el-breadcrumb>-->
+		<my-bread level1="用户管理" level2="用户列表"></my-bread>
 	<!--search-->
 	<el-row>
 		<el-input v-model="query" @clear="resetUsers()" clearable placeholder="请输入用户信息" class="input-with-select">
@@ -270,8 +269,6 @@
 				this.getUsers()
 			},
 			async getUsers() {
-				const AUTH_TOKEN = localStorage.getItem('token')
-				this.$https.defaults.headers.common['Authorization'] = AUTH_TOKEN
 				const res = await this.$https.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`)
 
 				const {

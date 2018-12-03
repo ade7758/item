@@ -59,7 +59,7 @@
 		methods: {
 			async getMenus() {
 				const res = await this.$https.get(`menus`)
-				console.log(res)
+//				console.log(res)
 				this.menus = res.data.data
 			},
 			logout() {

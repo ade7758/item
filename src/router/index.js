@@ -8,7 +8,7 @@ import Role from '@/components/role/role.vue'
 
 Vue.use(Router)
 
-export default new Router({
+const route = new Router({
 	routes: [{
 			name: 'login',
 			path: '/login',
@@ -34,3 +34,18 @@ export default new Router({
 		}
 	]
 })
+
+route.beforeEach((to,form,next)=>{
+	if(to.path === '/login'){
+		next()	
+	}else{
+		const token = localStorage.getItem('token')
+		if(!token){
+			route.push({name:'login'})
+			return
+		}
+		next()
+	}
+})
+
+export default route
